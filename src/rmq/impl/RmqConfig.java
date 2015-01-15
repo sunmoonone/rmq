@@ -35,6 +35,8 @@ public class RmqConfig {
 	private int requestPullInterval=2;
 	private int workerThreadCount=3;
 	private boolean skipRequestOnError=false;
+
+	private String cluster;
 	
 	public static RmqConfig getConfig() {
 		if(_config==null){
@@ -74,7 +76,7 @@ public class RmqConfig {
 		config.requestPullInterval= Integer.valueOf(props.getProperty("rmq.requestPullInterval"));
 		config.workerThreadCount= Integer.valueOf(props.getProperty("rmq.workerThreadCount"));
 		config.skipRequestOnError= Boolean.valueOf(props.getProperty("rmq.skipRequestOnError"));
-		
+		config.cluster=props.getProperty("rmq.cluster");
 		return config;
 	
 	}
@@ -103,6 +105,14 @@ public class RmqConfig {
 
 	public void setSkipRequestOnError(boolean skipRequestOnError) {
 		this.skipRequestOnError = skipRequestOnError;
+	}
+
+	public String getCluster() {
+		return cluster;
+	}
+
+	public void setCluster(String cluster) {
+		this.cluster = cluster;
 	}
 
 	

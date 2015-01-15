@@ -20,6 +20,10 @@ public class RedisMQ implements ConsumerQueue {
 	public RedisMQ() {
 		this.poolManager = new JedisPoolManager();
 	}
+	
+	public RedisMQ(JedisPoolManager pm){
+		this.poolManager=pm;
+	}
 
 	public boolean exists(String key) {
 		JedisPool pool = null;
@@ -554,6 +558,40 @@ public class RedisMQ implements ConsumerQueue {
 			logger.error("jedis error", ex);
 		} finally {
 			if (jedis != null) {
+				pool.returnResource(jedis);
+			}
+		}
+	}
+	
+	public String info(String section) {
+		JedisPool pool=null;
+		Jedis jedis = null;
+		try{
+			pool = poolManager.getPool();		
+			jedis = pool.getResource();
+			return jedis.info(section);		
+		}catch(Exception ex){
+			logger.error("jedis error", ex);
+			return null;
+		}finally{
+			if(jedis!=null){
+				pool.returnResource(jedis);
+			}
+		}
+	}
+	
+	public String info() {
+		JedisPool pool=null;
+		Jedis jedis = null;
+		try{
+			pool = poolManager.getPool();		
+			jedis = pool.getResource();
+			return jedis.info();		
+		}catch(Exception ex){
+			logger.error("jedis error", ex);
+			return null;
+		}finally{
+			if(jedis!=null){
 				pool.returnResource(jedis);
 			}
 		}

@@ -8,9 +8,19 @@ import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 
 public class JedisPoolManager {
-	private static JedisPool pool;
+	private JedisPool pool;
+	
+	public JedisPoolManager(){}
+	
+	public JedisPoolManager(JedisPool pool){
+		this.pool=pool;
+	}
+	
+	public JedisPoolManager(String ip,Integer port) {
+		this.pool= JedisPoolManager.buildPool(ip, port);
+	}
 
-	public JedisPool  getPool() throws IOException {
+	public JedisPool getPool() throws IOException {
 		if (pool == null) {
 			Properties props = new Properties();
 			props.load(JedisPoolManager.class
@@ -47,6 +57,36 @@ public class JedisPoolManager {
 					Integer.valueOf(props.getProperty("redis.port")));
 		}
 		return pool;
+	}
+	
+	public static JedisPool buildPool(String ip,Integer port,
+			Integer maxTotal,
+			Integer maxIdle,
+			Long maxWait,
+			Boolean testOnBorrow,
+			Boolean testOnReturn) {
+		
+		JedisPoolConfig config = new JedisPoolConfig();
+		config.setMaxTotal(maxTotal);
+		config.setMaxIdle(maxIdle);
+		config.setMaxWaitMillis(maxWait);
+		config.setTestOnBorrow(testOnBorrow);
+		config.setTestOnReturn(testOnReturn);
+
+		return new JedisPool(config,ip,port);
+	}
+	
+	
+	public static JedisPool buildPool(String ip,Integer port) {
+		
+		JedisPoolConfig config = new JedisPoolConfig();
+		config.setMaxTotal(1);
+		config.setMaxIdle(1);
+		config.setMaxWaitMillis(500);
+		config.setTestOnBorrow(true);
+		config.setTestOnReturn(true);
+
+		return new JedisPool(config,ip,port);
 	}
 
 }
